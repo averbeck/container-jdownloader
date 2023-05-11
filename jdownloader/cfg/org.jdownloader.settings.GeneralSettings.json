@@ -1,0 +1,4 @@
+{
+  "maxsimultanedownloadsperhost" : 1,
+  "defaultdownloadfolder" : "/downloads"
+}

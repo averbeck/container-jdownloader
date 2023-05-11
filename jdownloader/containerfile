@@ -1,0 +1,51 @@
+FROM xpra-base:latest
+
+#########################################
+##             JDownloader             ##
+#########################################
+
+FROM xpra-base
+
+# Default GUI app name
+ENV APPNAME="JDownloader2"
+
+# User/Group ID for GUI app
+ENV PUID=1000
+ENV PGID=100
+
+# Choose java home from base image
+ENV JAVA_HOME="/usr/lib/jvm/java-18-openjdk-amd64"
+
+# Install Java and basic packages
+RUN set -e \
+    \
+    && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        bzip2 \
+        curl \
+        openjdk-18-jre \
+        tar \
+        unrar \
+        xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Firefox browser
+RUN set -e \
+    && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        libdbus-glib-1-2 \
+    && mkdir -p /data \
+    && curl -L -o firefox.tar.bz2 "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" \
+    && mkdir -p /opt \
+    && tar -x -j -f firefox.tar.bz2 -C /opt \
+    && ln -s /opt/firefox/firefox /usr/local/bin/firefox \
+    && rm -rf /data /var/lib/apt/lists/*
+
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY JDownloader.jar /usr/local/share/jd2/
+COPY cfg/* /usr/local/share/jd2/cfg/
+COPY jd2launcher.sh /usr/local/bin/jd2launcher
+
+RUN set -e \
+    \
+    && chmod +x /docker-entrypoint.sh /usr/local/bin/jd2launcher
+
+WORKDIR /jd2
