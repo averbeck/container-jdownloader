@@ -1,0 +1,44 @@
+FROM ubuntu:22.04 as xpra-base
+
+# Set default password
+ENV XPRA_PASSWORD xpra
+
+# Add winswitch repository and install Xpra
+RUN set -ex \
+    \
+    && UBUNTU_VERSION=$(cat /etc/os-release | grep UBUNTU_CODENAME | sed 's/UBUNTU_CODENAME=//') \
+    \
+    && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        curl \
+        gnupg \
+        openssl \
+        python3-requests \
+    \
+    && curl http://xpra.org/gpg.asc | apt-key add - \
+    && echo "deb http://xpra.org/ $UBUNTU_VERSION main" >> /etc/apt/sources.list.d/xpra.list \
+    && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        xpra \
+        xpra-html5 \
+    \
+    && apt-get remove -y --purge gnupg curl \
+    && apt-get autoremove -y --purge \
+    \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /home/xpra
+
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY xpra.conf /etc/xpra/xpra.conf
+
+# Allow users to read default certificate
+RUN set -ex \
+    \
+    && chmod 644 /etc/xpra/ssl-cert.pem \
+    \
+    && chmod +x "/docker-entrypoint.sh"
+
+# Expose Xpra HTML5 client port
+EXPOSE 8080
+
+# Use docker-entrypoint.sh to allow passing options to Xpra and start Xpra from bash
+ENTRYPOINT ["/docker-entrypoint.sh"]
