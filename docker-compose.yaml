@@ -1,0 +1,29 @@
+version: "3.7"
+
+services:
+
+  jdownloader:
+
+    build:
+      context: ./
+      dockerfile: ./jdownloader/containerfile
+      target: jdownloader-xpra:latest
+
+    image: jdownloader-xpra:latest
+
+    container_name: jdownloader
+
+    restart: unless-stopped
+
+    ports:
+      - "1080:8080/tcp"
+
+    volumes:
+      - "/tmp/jd2:/jd2"
+      - "/tmp/downloads:/downloads"
+
+    environment:
+      - PUID=1000
+      - PGID=100
+      - TZ=Europe/Berlin
+      - XPRA_PASSWORD=jd2
