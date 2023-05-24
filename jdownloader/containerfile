@@ -39,13 +39,13 @@ RUN set -e \
     && ln -s /opt/firefox/firefox /usr/local/bin/firefox \
     && rm -rf /data /var/lib/apt/lists/*
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+COPY container-entrypoint.sh /container-entrypoint.sh
 COPY JDownloader.jar /usr/local/share/jd2/
 COPY cfg/* /usr/local/share/jd2/cfg/
 COPY jd2launcher.sh /usr/local/bin/jd2launcher
 
 RUN set -e \
     \
-    && chmod +x /docker-entrypoint.sh /usr/local/bin/jd2launcher
+    && chmod +x /container-entrypoint.sh /usr/local/bin/jd2launcher
 
 WORKDIR /jd2
