@@ -22,6 +22,10 @@ mkdir -p "/run/user/${PUID}/${USER}"
 chown -R "${PUID}" "/run/user/${PUID}"
 chmod -R 700 "/run/user/${PUID}"
 
+# Ensure persistent firefox profile
+mkdir -p /jd2/.mozilla
+ln -sf /jd2/.mozilla /home/"${USER}"/.mozilla
+
 # Fix permissions
 chown -R ${PUID}:${PGID} /jd2 /downloads
 chmod -R g+rw /jd2 /downloads
