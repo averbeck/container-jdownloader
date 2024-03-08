@@ -33,9 +33,9 @@ RUN set -e \
     && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
         libdbus-glib-1-2 \
     && mkdir -p /data \
-    && curl -L -o firefox.tar.bz2 "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" \
+    && curl -L -o /data/firefox.tar.bz2 "https://download.mozilla.org/?product=firefox-latest-ssl&os=linux64&lang=en-US" \
     && mkdir -p /opt \
-    && tar -x -j -f firefox.tar.bz2 -C /opt \
+    && tar -x -j -f /data/firefox.tar.bz2 -C /opt \
     && ln -s /opt/firefox/firefox /usr/local/bin/firefox \
     && rm -rf /data /var/lib/apt/lists/*
 
@@ -46,6 +46,7 @@ COPY jd2launcher.sh /usr/local/bin/jd2launcher
 
 RUN set -e \
     \
-    && chmod +x /container-entrypoint.sh /usr/local/bin/jd2launcher
+    && chmod +x /container-entrypoint.sh /usr/local/bin/jd2launcher \
+    && chmod a+r /usr/local/bin/jd2launcher
 
 WORKDIR /jd2

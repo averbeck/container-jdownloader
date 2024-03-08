@@ -29,5 +29,5 @@ chmod -R g+rw /jd2 /downloads
 # Start Xpra as xpra user with command specified in dockerfile as CMD or passed as parameter to docker run
 #APP="$@"
 APP="jd2launcher"
-CMD="XPRA_PASSWORD=$XPRA_PASSWORD /usr/bin/xpra start --daemon=no --webcam=no --exit-with-children=no --start-child='${APP}'"
+CMD="XPRA_PASSWORD=$XPRA_PASSWORD /usr/bin/xpra start --daemon=no --webcam=no --exit-with-children=no --start='${APP}'"
 runuser -l "${USER}" -c "${CMD}"
