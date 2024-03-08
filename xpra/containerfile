@@ -32,11 +32,22 @@ WORKDIR /home/xpra
 COPY container-entrypoint.sh /container-entrypoint.sh
 COPY xpra.conf /etc/xpra/xpra.conf
 
-# Allow users to read default certificate
 RUN set -ex \
     \
     && chmod 644 /etc/xpra/ssl-cert.pem \
     && chmod a+r /etc/xpra/xpra.conf \
+    && mkdir -p /etc/xdg/menus/ \
+    && echo \
+"<Menu>\n\
+  <Name>Applications</Name>\n\
+  <Directory>X-GNOME-Menu-Applications.directory</Directory>\n\
+  <DefaultAppDirs/>\n\
+  <DefaultDirectoryDirs/>\n\
+  <DefaultMergeDirs/>\n\
+  <Include>\n\
+    <Filename>org.gnome.Software.desktop</Filename>\n\
+  </Include>\n\
+</Menu>\n" > /etc/xdg/menus/debian-menu.menu \
     && chmod +x "/container-entrypoint.sh"
 
 # Expose Xpra HTML5 client port

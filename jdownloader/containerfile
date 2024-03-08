@@ -47,6 +47,12 @@ COPY jd2launcher.sh /usr/local/bin/jd2launcher
 RUN set -e \
     \
     && chmod +x /container-entrypoint.sh /usr/local/bin/jd2launcher \
-    && chmod a+r /usr/local/bin/jd2launcher
+    && chmod a+r /usr/local/bin/jd2launcher \
+    && echo "#!/usr/bin/env xdg-open\n[Desktop Entry]\nType=Application\nExec=jd2launcher\nName=JDownloader" \
+        > /usr/share/applications/jdownloader.desktop \
+    && chmod +x /usr/share/applications/jdownloader.desktop \
+    && echo "#!/usr/bin/env xdg-open\n[Desktop Entry]\nType=Application\nExec=firefox\nName=Firefox" \
+        > /usr/share/applications/firefox.desktop \
+    && chmod +x /usr/share/applications/firefox.desktop
 
-WORKDIR /jd2
+WORKDIR /downloads
