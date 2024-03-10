@@ -1,8 +1,7 @@
+.PHONY: xpra-container-image
+xpra-container-image:
+	cd ./xpra && docker build -t averbeck/xpra-base:latest -f containerfile .
 
-.PHONY: xpra-container
-xpra-container:
-	cd ./xpra && docker build -t xpra-base:latest -f containerfile .
-
-.PHONY: jdownloader-container
-jdownloader-container:
-	cd ./jdownloader && docker build -t jdownloader-xpra:latest -f containerfile .
+.PHONY: jdownloader-container-image
+jdownloader-container-image:
+	cd ./jdownloader && docker build -t averbeck/jdownloader-xpra:latest -f containerfile .

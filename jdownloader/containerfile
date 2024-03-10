@@ -1,10 +1,8 @@
-FROM xpra-base:latest
-
 #########################################
 ##             JDownloader             ##
 #########################################
 
-FROM xpra-base
+FROM averbeck/xpra-base:latest
 
 # Default GUI app name
 ENV APPNAME="JDownloader2"
