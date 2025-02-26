@@ -1,7 +1,7 @@
 .PHONY: xpra-container-image
 xpra-container-image:
-	cd ./xpra && docker build -t averbeck/xpra-base:latest -f containerfile .
+	buildah build -f ./xpra/containerfile -t averbeck/xpra-base:latest ./xpra
 
 .PHONY: jdownloader-container-image
 jdownloader-container-image:
-	cd ./jdownloader && docker build -t averbeck/jdownloader-xpra:latest -f containerfile .
+	buildah build -f ./jdownloader/containerfile -t averbeck/jdownloader-xpra:latest --build-arg REGISTRY=localhost ./jdownloader 
