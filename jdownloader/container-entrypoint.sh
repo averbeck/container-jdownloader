@@ -4,7 +4,8 @@ set -eu
 
 : ${PUID:=1000}
 : ${PGID:=100}
-: ${USER:=jdownloader}
+: ${USER:="jdownloader"}
+: ${XPRA_PASSWORD:="jd2"}
 
 # Create folders if they are missing
 mkdir -p /jd2 /downloads
@@ -15,8 +16,16 @@ if [ ! -f /jd2/JDownloader.jar ]; then
 fi
 
 # Ensure user and group
-getent group "${PGID}" || groupadd -g "${PGID}" "${USER}"
-getent passwd "${PUID}" || useradd --create-home --shell /bin/bash "${USER}" --uid "${PUID}" --gid "${PGID}"
+USER_OLD="$(getent passwd "${PUID}" | cut -f1 -d:)"
+if [ -z "${USER_OLD}" ]; then
+  getent group "${PGID}" || groupadd -g "${PGID}" "${USER}"
+  useradd --create-home --shell /bin/bash "${USER}" --uid "${PUID}" --gid "${PGID}"
+else
+  getent group "${PGID}" || groupadd -g "${PGID}" "${USER}"
+  usermod --login "${USER}" --move-home --home "/home/${USER}" "${USER_OLD}"
+fi
+usermod -a -G "${PGID}" "${USER}"
+
 rm -rf "/run/user/${PUID}"
 mkdir -p "/run/user/${PUID}/${USER}"
 chown -R "${PUID}" "/run/user/${PUID}"
@@ -33,5 +42,5 @@ chmod -R g+rw /jd2 /downloads
 # Start Xpra as xpra user with command specified in dockerfile as CMD or passed as parameter to docker run
 #APP="$@"
 APP="jd2launcher"
-CMD="XPRA_PASSWORD=$XPRA_PASSWORD /usr/bin/xpra start --daemon=no --webcam=no --exit-with-children=no --start='${APP}'"
+CMD="XPRA_PASSWORD='${XPRA_PASSWORD}' /usr/bin/xpra start --daemon=no --webcam=no --exit-with-children=no --start='${APP}'"
 runuser -l "${USER}" -c "${CMD}"
