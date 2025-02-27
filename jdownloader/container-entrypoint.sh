@@ -5,7 +5,6 @@ set -eu
 : ${PUID:=1000}
 : ${PGID:=100}
 : ${USER:="jdownloader"}
-: ${XPRA_PASSWORD:="jd2"}
 
 # Create folders if they are missing
 mkdir -p /jd2 /downloads
@@ -32,15 +31,14 @@ chown -R "${PUID}" "/run/user/${PUID}"
 chmod -R 700 "/run/user/${PUID}"
 
 # Ensure persistent firefox profile
-mkdir -p /jd2/.mozilla
-ln -sf /jd2/.mozilla /home/"${USER}"/.mozilla
+mkdir -p "/jd2/.mozilla"
+ln -sf "/jd2/.mozilla" "/home/${USER}/.mozilla"
 
 # Fix permissions
 chown -R ${PUID}:${PGID} /jd2 /downloads
 chmod -R g+rw /jd2 /downloads
 
-# Start Xpra as xpra user with command specified in dockerfile as CMD or passed as parameter to docker run
-#APP="$@"
-APP="jd2launcher"
-CMD="XPRA_PASSWORD='${XPRA_PASSWORD}' /usr/bin/xpra start --daemon=no --webcam=no --exit-with-children=no --start='${APP}'"
+# Start Xpra with JDownloader
+: ${APP:="jd2launcher"}
+: ${CMD:="XPRA_PASSWORD='${XPRA_PASSWORD}' /usr/bin/xpra start --daemon=no --exit-with-children=no --start='${APP}'"}
 runuser -l "${USER}" -c "${CMD}"

@@ -7,16 +7,16 @@ services:
     build:
       context: ./
       dockerfile: ./jdownloader/containerfile
-      target: jdownloader-xpra:latest
+      target: averbeck/jdownloader-xpra:latest
 
-    image: jdownloader-xpra:latest
+    image: averbeck/jdownloader-xpra:latest
 
     container_name: jdownloader
 
     restart: unless-stopped
 
     ports:
-      - "1080:8080/tcp"
+      - "10443:10443/tcp"
 
     volumes:
       - "/tmp/jd2:/jd2"

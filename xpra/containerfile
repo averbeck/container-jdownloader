@@ -18,13 +18,16 @@ RUN set -ex \
         curl \
         gnupg \
         openssl \
+        python3-paramiko \
         python3-requests \
         python3-xdg \
+        xterm \
     \
     && curl http://xpra.org/gpg.asc | apt-key add - \
     && echo "deb http://xpra.org/ $UBUNTU_VERSION main" >> /etc/apt/sources.list.d/xpra.list \
     && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         xpra \
+        xpra-codecs \
         xpra-html5 \
         xpra-x11 \
     \
@@ -33,16 +36,17 @@ RUN set -ex \
     \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /home/xpra
+WORKDIR /tmp
 
 COPY container-entrypoint.sh /container-entrypoint.sh
-COPY xpra.conf /etc/xpra/xpra.conf
+COPY xpra.conf /home/ubuntu/.config/xpra/xpra.conf
 
 RUN set -ex \
     \
     && chmod 644 /etc/xpra/ssl/cert.pem \
     && chmod 644 /etc/xpra/ssl/key.pem \
-    && chmod a+r /etc/xpra/xpra.conf \
+    && chown -R ubuntu:ubuntu /home/ubuntu/.config \
+    && chmod 600 /home/ubuntu/.config/xpra/xpra.conf \
     && mkdir -p /etc/xdg/menus/ \
     && echo \
 "<Menu>\n\
@@ -58,7 +62,7 @@ RUN set -ex \
     && chmod +x "/container-entrypoint.sh"
 
 # Expose Xpra HTML5 client port
-EXPOSE 8080
+EXPOSE 10443
 
 # Use container-entrypoint.sh to allow passing options to Xpra and start Xpra from bash
 ENTRYPOINT ["/container-entrypoint.sh"]
